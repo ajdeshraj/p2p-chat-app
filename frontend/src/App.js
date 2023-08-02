@@ -1,11 +1,53 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState} from 'react'
+import io from 'socket.io-client'
 import './App.css'
+import './Chat'
+
+const socket = io.connect('http:localhost:8000')
 
 const App = () => {
-    const [message, setMessage] = useState('')
-    const [chatHistory, setChatHistory] = useState([])
-    const messageListRef = useRef(null)
+    const [username, setUsername] = useState('')
+    const [room, setRoom] = useState('')
+    const [showChat, setShowChat] = useState(false)
 
+    const joinRoom = () => {
+        if (username !== '' && room !== '') {
+            socket.emit('joinRoom', room)
+            setShowChat(true)
+        }
+    }
+
+    return (
+        <div className='app'>
+            {!showChat ? (
+                <div className="joinChatContainer">
+                    <h4>Join A Chat</h4>
+                    <input 
+                        type="text"
+                        placeholder="Name"
+                        onChange={(event) => {
+                            setUsername(event.target.value)
+                        }}
+                    />
+                    <input 
+                        type="text"
+                        placeholder="Peer ID"
+                        onChange={(event) => {
+                            setRoom(event.target.value)
+                        }}
+                    />
+                    <button onClick={joinRoom}>Join</button>
+                </div>
+            ) : (
+                <Chat socket={socket} username={username} room={room} />
+            )}
+        </div>
+    )
+}
+
+export default App
+
+    /*
     // Simulating Messages from other user
     useEffect(() => {
         const timer = setInterval(() => {
@@ -51,6 +93,4 @@ const App = () => {
             </form>
         </div>
   )
-}
-
-export default App;
+*/
