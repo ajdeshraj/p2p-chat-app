@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './App.css'
 
 const App = () => {
     const [message, setMessage] = useState('')
     const [chatHistory, setChatHistory] = useState([])
+    const messageListRef = useRef(null)
 
     // Simulating Messages from other user
     useEffect(() => {
         const timer = setInterval(() => {
             const randomMessage = `Incoming message ${chatHistory.length + 1}`
             setChatHistory((prevHistory) => [...prevHistory, randomMessage])
-        }, 3000) // Simulating new message every 3 seconds
+        }, 10000) // Simulating new message every 10 seconds
 
         return () => clearInterval(timer)
     }, [chatHistory])
@@ -24,10 +25,15 @@ const App = () => {
         }
     }
 
+    // Adding autoscroll to automate scrolling to bottom when new message is sent 
+    useEffect(() => {
+        messageListRef.current.scrollTop = messageListRef.current.scrollHeight
+    }, [chatHistory])
+
     return (
         <div className="app">
             <h1>Peer-to-Peer Chat</h1>
-            <div className="chat-box">
+            <div className="chat-box" ref={messageListRef}>
                 {chatHistory.map((msg, index) => (
                   <div key={index} className="message">
                     {msg}
