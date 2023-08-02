@@ -4,6 +4,7 @@ const cors = require('cors')
 const { Server } = require('socket.io')
 
 const app = express()
+const server = http.createServer(app)
 
 app.use(cors())
 
@@ -32,4 +33,4 @@ io.on('Connect', (socket) => {
 
 server.listen(8000, () => {
     console.log('Backend Server Running on PORT 8000')
-}
+})
